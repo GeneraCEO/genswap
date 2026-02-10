@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Chain } from '../../types';
 import { chains } from '../../data/chains';
+import { ChainLogo } from './ChainLogo';
 
 interface NetworkSelectorProps {
   selectedChain: Chain;
@@ -24,15 +25,15 @@ export function NetworkSelector({ selectedChain, onSelectChain }: NetworkSelecto
     <div ref={ref} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-indigo-500 transition-all text-white"
+        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary hover:bg-secondary/80 border border-border hover:border-primary transition-all text-foreground"
       >
-        <span className="text-lg">{selectedChain.icon}</span>
+        <ChainLogo chainId={selectedChain.id} fallbackIcon={selectedChain.icon} size="sm" />
         <span className="hidden sm:block text-sm font-medium">{selectedChain.name}</span>
-        <ChevronDown className="w-4 h-4 text-gray-400" />
+        <ChevronDown className="w-4 h-4 text-muted-foreground" />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-56 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 max-h-80 overflow-y-auto">
+        <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-56 bg-popover border border-border rounded-xl shadow-2xl z-50 max-h-80 overflow-y-auto">
           {chains.map((chain) => (
             <button
               key={chain.id}
@@ -40,11 +41,11 @@ export function NetworkSelector({ selectedChain, onSelectChain }: NetworkSelecto
                 onSelectChain(chain);
                 setIsOpen(false);
               }}
-              className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-800 transition-colors text-left ${
-                selectedChain.id === chain.id ? 'bg-gray-800 text-indigo-400' : 'text-white'
+              className={`w-full flex items-center gap-3 px-4 py-3 hover:bg-secondary transition-colors text-left ${
+                selectedChain.id === chain.id ? 'bg-secondary text-primary' : 'text-foreground'
               }`}
             >
-              <span className="text-lg">{chain.icon}</span>
+              <ChainLogo chainId={chain.id} fallbackIcon={chain.icon} size="sm" />
               <span className="text-sm font-medium">{chain.name}</span>
             </button>
           ))}

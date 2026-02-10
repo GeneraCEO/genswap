@@ -28,10 +28,10 @@ export function SettingsModal({ isOpen, onClose, slippage, onSlippageChange }: S
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="w-full max-w-md bg-gray-900 border-2 border-indigo-500 rounded-2xl p-6 text-white">
+      <div className="w-full max-w-md bg-card border-2 border-primary rounded-2xl p-6 text-foreground">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">Settings</h2>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-800 transition-colors">
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-secondary transition-colors">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -39,7 +39,7 @@ export function SettingsModal({ isOpen, onClose, slippage, onSlippageChange }: S
         <div className="mb-6">
           <div className="flex justify-between items-center mb-3">
             <span className="font-bold">Slippage tolerance</span>
-            {slippage && <span className="text-sm text-gray-400">{slippage}%</span>}
+            {slippage && <span className="text-sm text-muted-foreground">{slippage}%</span>}
           </div>
           <div className="flex gap-2 mb-3">
             {presetSlippages.map((preset) => (
@@ -48,8 +48,8 @@ export function SettingsModal({ isOpen, onClose, slippage, onSlippageChange }: S
                 onClick={() => handlePresetClick(preset)}
                 className={`flex-1 py-2 px-3 rounded-xl font-bold transition-all ${
                   slippage === preset
-                    ? 'bg-indigo-500 text-white'
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                 }`}
               >
                 {preset}%
@@ -62,12 +62,12 @@ export function SettingsModal({ isOpen, onClose, slippage, onSlippageChange }: S
               placeholder="Custom"
               value={isCustom ? slippage : customSlippage}
               onChange={(e) => handleCustomChange(e.target.value)}
-              className="w-full py-3 px-4 pr-8 rounded-xl font-bold outline-none transition-all bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500"
+              className="w-full py-3 px-4 pr-8 rounded-xl font-bold outline-none transition-all bg-secondary text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">%</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-muted-foreground">%</span>
           </div>
           {parseFloat(slippage) > 5 && (
-            <div className="mt-3 p-3 rounded-lg text-sm font-bold bg-yellow-900/30 text-yellow-400">
+            <div className="mt-3 p-3 rounded-lg text-sm font-bold bg-destructive/20 text-destructive">
               ⚠️ High slippage tolerance may result in unfavorable trades
             </div>
           )}
@@ -82,9 +82,9 @@ export function SettingsModal({ isOpen, onClose, slippage, onSlippageChange }: S
               type="text"
               placeholder="30"
               defaultValue="30"
-              className="w-full py-3 px-4 pr-20 rounded-xl font-bold outline-none transition-all bg-gray-800 text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500"
+              className="w-full py-3 px-4 pr-20 rounded-xl font-bold outline-none transition-all bg-secondary text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-primary"
             />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gray-400">minutes</span>
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-muted-foreground">minutes</span>
           </div>
         </div>
       </div>
