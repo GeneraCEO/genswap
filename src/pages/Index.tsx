@@ -5,6 +5,8 @@ import { CompleteSwapInterface } from '../components/dex/CompleteSwapInterface';
 import { UniswapStyleTokenModal } from '../components/dex/UniswapStyleTokenModal';
 import { SettingsModal } from '../components/dex/SettingsModal';
 import { ChartModal } from '../components/dex/ChartModal';
+import { PerpetualsPage } from '../components/dex/PerpetualsPage';
+import { LendingPage } from '../components/dex/LendingPage';
 import { chains } from '../data/chains';
 import { getTokenListByChain } from '../data/tokenList';
 import { Chain, Token } from '../types';
@@ -48,44 +50,50 @@ const Index = () => {
   };
 
   const renderTabContent = () => {
-    if (activeTab === 'swap') {
-      return (
-        <CompleteSwapInterface
-          tokens={tokenModalField === 'from' ? fromTokens : toTokens}
-          onOpenTokenModal={handleOpenTokenModal}
-          fromToken={fromToken}
-          toToken={toToken}
-          onOpenSettings={() => setSettingsOpen(true)}
-          fromChain={fromChain}
-          toChain={toChain}
-          onFromChainChange={handleFromChainChange}
-          onToChainChange={handleToChainChange}
-        />
-      );
+    switch (activeTab) {
+      case 'swap':
+        return (
+          <CompleteSwapInterface
+            tokens={tokenModalField === 'from' ? fromTokens : toTokens}
+            onOpenTokenModal={handleOpenTokenModal}
+            fromToken={fromToken}
+            toToken={toToken}
+            onOpenSettings={() => setSettingsOpen(true)}
+            fromChain={fromChain}
+            toChain={toChain}
+            onFromChainChange={handleFromChainChange}
+            onToChainChange={handleToChainChange}
+          />
+        );
+      case 'perpetuals':
+        return <PerpetualsPage />;
+      case 'lend':
+        return <LendingPage />;
+      case 'predictions':
+        return (
+          <div className="w-full max-w-md mx-auto text-center py-16">
+            <div className="text-6xl mb-4">🔮</div>
+            <h3 className="text-2xl font-bold text-foreground mb-2">Predictions</h3>
+            <p className="text-muted-foreground">Predict price movements and earn rewards</p>
+            <p className="text-sm text-muted-foreground mt-4">Coming soon...</p>
+          </div>
+        );
+      case 'bridge':
+        return (
+          <div className="w-full max-w-md mx-auto text-center py-16">
+            <div className="text-6xl mb-4">🌉</div>
+            <h3 className="text-2xl font-bold text-foreground mb-2">Bridge</h3>
+            <p className="text-muted-foreground">Transfer assets across different chains</p>
+            <p className="text-sm text-muted-foreground mt-4">Coming soon...</p>
+          </div>
+        );
+      default:
+        return null;
     }
-
-    const tabInfo: Record<string, { emoji: string; title: string; desc: string }> = {
-      perpetuals: { emoji: '📊', title: 'Perpetuals', desc: 'Trade perpetual futures with leverage' },
-      predictions: { emoji: '🔮', title: 'Predictions', desc: 'Predict price movements and earn rewards' },
-      bridge: { emoji: '🌉', title: 'Bridge', desc: 'Transfer assets across different chains' },
-      lend: { emoji: '💰', title: 'Lend', desc: 'Lend your assets and earn interest' },
-    };
-
-    const info = tabInfo[activeTab];
-    if (!info) return null;
-
-    return (
-      <div className="w-full max-w-md mx-auto text-center py-16">
-        <div className="text-6xl mb-4">{info.emoji}</div>
-        <h3 className="text-2xl font-bold text-white mb-2">{info.title}</h3>
-        <p className="text-gray-400">{info.desc}</p>
-        <p className="text-sm text-gray-500 mt-4">Coming soon...</p>
-      </div>
-    );
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-background">
       <Header
         selectedChain={fromChain}
         onSelectChain={handleFromChainChange}

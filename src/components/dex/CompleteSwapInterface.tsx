@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Token, Chain } from '../../types';
-import { ArrowDownUp, Settings, ChevronDown } from 'lucide-react';
-import { CompactNetworkSelector } from './CompactNetworkSelector';
+import { Settings, ChevronDown } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { TokenLogo } from './TokenLogo';
 
 interface CompleteSwapInterfaceProps {
   tokens: Token[];
@@ -20,13 +21,10 @@ export function CompleteSwapInterface({
   fromToken,
   toToken,
   onOpenSettings,
-  fromChain,
-  toChain,
-  onFromChainChange,
-  onToChainChange,
 }: CompleteSwapInterfaceProps) {
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
+  const [isSwapping, setIsSwapping] = useState(false);
 
   const handlePercentageClick = (percentage: number) => {
     if (fromToken) {
@@ -40,9 +38,11 @@ export function CompleteSwapInterface({
   };
 
   const handleSwapTokens = () => {
+    setIsSwapping(true);
     const tempAmount = fromAmount;
     setFromAmount(toAmount);
     setToAmount(tempAmount);
+    setTimeout(() => setIsSwapping(false), 400);
   };
 
   const handleFromAmountChange = (value: string) => {
@@ -57,147 +57,133 @@ export function CompleteSwapInterface({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-gradient-to-br from-indigo-500/10 to-cyan-500/10 rounded-3xl p-[2px] shadow-2xl">
-        <div className="bg-gradient-to-br from-gray-900 to-black rounded-3xl p-4 sm:p-6">
+    <div className="w-full max-w-[480px] mx-auto">
+      <div className="rounded-3xl border-2 border-primary/40 bg-background p-1 shadow-2xl shadow-primary/10">
+        <div className="bg-background rounded-[22px] p-5 sm:p-6">
           {/* Header */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-white">Swap</h2>
+          <div className="flex justify-between items-center mb-5">
+            <h2 className="text-2xl font-bold text-foreground">Swap</h2>
             <button
               onClick={onOpenSettings}
-              className="p-2.5 rounded-xl hover:bg-gray-800/50 transition-all text-gray-400 hover:text-white border border-gray-700 hover:border-indigo-500"
+              className="p-2.5 rounded-xl hover:bg-secondary transition-all text-muted-foreground hover:text-foreground border border-border hover:border-primary"
             >
               <Settings className="w-5 h-5" />
             </button>
           </div>
 
-          {/* FROM SECTION */}
-          <div className="mb-3">
-            <div className="bg-gradient-to-br from-indigo-500/30 to-cyan-500/30 rounded-2xl p-[2px]">
-              <div className="bg-gray-900/90 rounded-2xl p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-300">Pay</span>
-                  {fromToken && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Balance:</span>
-                      <span className="text-sm font-bold text-white">{fromToken.balance}</span>
-                    </div>
-                  )}
-                </div>
+          {/* PAY SECTION */}
+          <div className="mb-2">
+            <div className="rounded-2xl border-2 border-primary/60 bg-card p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-muted-foreground">Pay</span>
+                {fromToken && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Balance:</span>
+                    <span className="text-sm font-bold text-foreground">{fromToken.balance}</span>
+                  </div>
+                )}
+              </div>
 
-                <CompactNetworkSelector
-                  selectedChain={fromChain}
-                  onSelectChain={onFromChainChange}
-                  label="Source Network"
-                />
-
+              {/* Amount + Token Select Row */}
+              <div className="flex items-center gap-3 mb-4">
                 <input
                   type="text"
                   value={fromAmount}
                   onChange={(e) => handleFromAmountChange(e.target.value)}
                   placeholder="0.0"
-                  className="w-full bg-transparent text-3xl sm:text-4xl font-bold outline-none text-white placeholder-gray-700"
+                  className="flex-1 bg-transparent text-4xl font-bold outline-none text-foreground placeholder-muted-foreground/30 min-w-0"
                 />
-
-                <div className="grid grid-cols-4 gap-2">
-                  {[25, 50, 75].map((pct) => (
-                    <button
-                      key={pct}
-                      onClick={() => handlePercentageClick(pct)}
-                      disabled={!fromToken}
-                      className="px-3 py-2 rounded-lg text-xs font-bold bg-gray-800 hover:bg-gray-700 text-white transition-all border border-gray-700 hover:border-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {pct}%
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => handlePercentageClick(100)}
-                    disabled={!fromToken}
-                    className="px-3 py-2 rounded-lg text-xs font-bold bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-500 text-black transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    MAX
-                  </button>
-                </div>
-
                 <button
                   onClick={() => onOpenTokenModal('from')}
-                  className="w-full flex items-center justify-between bg-gray-800/80 hover:bg-gray-700 px-4 py-3 rounded-xl transition-all border border-gray-700 hover:border-indigo-500"
+                  className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 px-4 py-3 rounded-2xl transition-all border border-border hover:border-primary shrink-0"
                 >
-                  <div className="flex items-center gap-3">
-                    {fromToken ? (
-                      <>
-                        <span className="text-2xl">{fromToken.logoUrl}</span>
-                        <div className="text-left">
-                          <div className="font-bold text-white text-base">{fromToken.symbol}</div>
-                          <div className="text-xs text-gray-400">{fromToken.name}</div>
-                        </div>
-                      </>
-                    ) : (
-                      <span className="font-bold text-white">Select Token</span>
-                    )}
-                  </div>
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                  {fromToken ? (
+                    <>
+                      <TokenLogo address={fromToken.address} symbol={fromToken.symbol} size="md" />
+                      <span className="font-bold text-foreground text-base">{fromToken.symbol}</span>
+                    </>
+                  ) : (
+                    <span className="font-bold text-foreground whitespace-nowrap">Select</span>
+                  )}
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+
+              {/* Percentage Buttons */}
+              <div className="grid grid-cols-4 gap-2">
+                {[25, 50, 75].map((pct) => (
+                  <button
+                    key={pct}
+                    onClick={() => handlePercentageClick(pct)}
+                    disabled={!fromToken}
+                    className="px-3 py-2 rounded-lg text-xs font-bold bg-secondary hover:bg-secondary/80 text-foreground transition-all border border-border hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {pct}%
+                  </button>
+                ))}
+                <button
+                  onClick={() => handlePercentageClick(100)}
+                  disabled={!fromToken}
+                  className="px-3 py-2 rounded-lg text-xs font-bold bg-accent text-accent-foreground transition-all shadow-md hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  MAX
                 </button>
               </div>
             </div>
           </div>
 
-          {/* SWAP BUTTON */}
-          <div className="flex justify-center -my-2 relative z-10">
-            <button
+          {/* SWAP ARROWS - animated */}
+          <div className="flex justify-center -my-3 relative z-10">
+            <motion.button
               onClick={handleSwapTokens}
-              className="p-3 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-indigo-500 hover:border-cyan-500 transition-all shadow-lg hover:shadow-indigo-500/30 hover:scale-110 active:scale-95"
+              animate={{ rotate: isSwapping ? 180 : 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              className="p-3 rounded-xl bg-card border-2 border-primary shadow-lg shadow-primary/20 cursor-pointer"
             >
-              <ArrowDownUp className="w-5 h-5 text-cyan-500" />
-            </button>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--dex-cyan))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 3v18" /><path d="m3 7 4-4 4 4" />
+                <path d="M17 21V3" /><path d="m13 17 4 4 4-4" />
+              </svg>
+            </motion.button>
           </div>
 
-          {/* TO SECTION */}
-          <div className="mb-6">
-            <div className="bg-gradient-to-br from-indigo-500/30 to-cyan-500/30 rounded-2xl p-[2px]">
-              <div className="bg-gray-900/90 rounded-2xl p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-gray-300">Receive</span>
-                  {toToken && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Balance:</span>
-                      <span className="text-sm font-bold text-white">{toToken.balance}</span>
-                    </div>
-                  )}
-                </div>
+          {/* RECEIVE SECTION */}
+          <div className="mb-5">
+            <div className="rounded-2xl border-2 border-primary/60 bg-card p-5">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-semibold text-muted-foreground">Receive</span>
+                {toToken && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">Balance:</span>
+                    <span className="text-sm font-bold text-foreground">{toToken.balance}</span>
+                  </div>
+                )}
+              </div>
 
-                <CompactNetworkSelector
-                  selectedChain={toChain}
-                  onSelectChain={onToChainChange}
-                  label="Destination Network"
-                />
-
+              {/* Amount + Token Select Row */}
+              <div className="flex items-center gap-3">
                 <input
                   type="text"
                   value={toAmount}
                   readOnly
                   placeholder="0.0"
-                  className="w-full bg-transparent text-3xl sm:text-4xl font-bold outline-none text-white placeholder-gray-700"
+                  className="flex-1 bg-transparent text-4xl font-bold outline-none text-foreground placeholder-muted-foreground/30 min-w-0"
                 />
-
                 <button
                   onClick={() => onOpenTokenModal('to')}
-                  className="w-full flex items-center justify-between bg-gray-800/80 hover:bg-gray-700 px-4 py-3 rounded-xl transition-all border border-gray-700 hover:border-indigo-500 mt-3"
+                  className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 px-4 py-3 rounded-2xl transition-all border border-border hover:border-primary shrink-0"
                 >
-                  <div className="flex items-center gap-3">
-                    {toToken ? (
-                      <>
-                        <span className="text-2xl">{toToken.logoUrl}</span>
-                        <div className="text-left">
-                          <div className="font-bold text-white text-base">{toToken.symbol}</div>
-                          <div className="text-xs text-gray-400">{toToken.name}</div>
-                        </div>
-                      </>
-                    ) : (
-                      <span className="font-bold text-white">Select Token</span>
-                    )}
-                  </div>
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                  {toToken ? (
+                    <>
+                      <TokenLogo address={toToken.address} symbol={toToken.symbol} size="md" />
+                      <span className="font-bold text-foreground text-base">{toToken.symbol}</span>
+                    </>
+                  ) : (
+                    <span className="font-bold text-foreground whitespace-nowrap">Select</span>
+                  )}
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
             </div>
@@ -205,10 +191,10 @@ export function CompleteSwapInterface({
 
           {/* Price Info */}
           {fromToken && toToken && fromAmount && (
-            <div className="mb-4 p-3 rounded-xl bg-gray-800/50 border border-gray-700">
+            <div className="mb-4 p-3 rounded-xl bg-card border border-border">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">Exchange Rate</span>
-                <span className="text-white font-medium">
+                <span className="text-muted-foreground">Exchange Rate</span>
+                <span className="text-foreground font-medium">
                   1 {fromToken.symbol} ≈ 1,500 {toToken.symbol}
                 </span>
               </div>
@@ -218,10 +204,10 @@ export function CompleteSwapInterface({
           {/* Swap Button */}
           <button
             disabled={!fromToken || !toToken || !fromAmount}
-            className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${
+            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all ${
               !fromToken || !toToken || !fromAmount
-                ? 'bg-gray-800 text-gray-600 cursor-not-allowed border border-gray-700'
-                : 'bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-500 text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 border-2 border-indigo-500'
+                ? 'bg-secondary text-muted-foreground cursor-not-allowed border border-border'
+                : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 border-2 border-primary'
             }`}
           >
             {!fromToken || !toToken ? 'Select Tokens' : !fromAmount ? 'Enter Amount' : 'Swap'}
