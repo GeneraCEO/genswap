@@ -1,4 +1,4 @@
-import { BarChart3, Wallet } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { NetworkSelector } from './NetworkSelector';
@@ -7,10 +7,9 @@ import { Chain } from '../../types';
 interface HeaderProps {
   selectedChain: Chain;
   onSelectChain: (chain: Chain) => void;
-  onOpenChart?: () => void;
 }
 
-export function Header({ selectedChain, onSelectChain, onOpenChart }: HeaderProps) {
+export function Header({ selectedChain, onSelectChain }: HeaderProps) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
@@ -33,14 +32,6 @@ export function Header({ selectedChain, onSelectChain, onOpenChart }: HeaderProp
           <NetworkSelector selectedChain={selectedChain} onSelectChain={onSelectChain} />
 
           <div className="flex items-center gap-2">
-            {onOpenChart && (
-              <button
-                onClick={onOpenChart}
-                className="p-2.5 rounded-lg hover:bg-secondary transition-all text-muted-foreground hover:text-foreground border border-border hover:border-primary"
-              >
-                <BarChart3 className="w-5 h-5" />
-              </button>
-            )}
 
             {isConnected ? (
               <button

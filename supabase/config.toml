@@ -1,1 +1,10 @@
 project_id = "xllwgijfeyqmraakxccd"
+
+[functions.coingecko-prices]
+verify_jwt = false
+
+[functions.hyperliquid-data]
+verify_jwt = false
+
+[functions.polymarket-data]
+verify_jwt = false

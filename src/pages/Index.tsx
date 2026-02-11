@@ -4,12 +4,25 @@ import { BottomNavigation, Tab } from '../components/dex/BottomNavigation';
 import { CompleteSwapInterface } from '../components/dex/CompleteSwapInterface';
 import { UniswapStyleTokenModal } from '../components/dex/UniswapStyleTokenModal';
 import { SettingsModal } from '../components/dex/SettingsModal';
-import { ChartModal } from '../components/dex/ChartModal';
 import { PerpetualsPage } from '../components/dex/PerpetualsPage';
 import { LendingPage } from '../components/dex/LendingPage';
+import { PredictionsPage } from '../components/dex/PredictionsPage';
+import { BridgePage } from '../components/dex/BridgePage';
+import { TradingViewWidget } from '../components/dex/TradingViewWidget';
 import { chains } from '../data/chains';
 import { getTokenListByChain } from '../data/tokenList';
 import { Chain, Token } from '../types';
+
+// Map token symbols to TradingView symbols
+const TV_SYMBOL_MAP: Record<string, string> = {
+  ETH: 'BINANCE:ETHUSDT', BTC: 'BINANCE:BTCUSDT', WBTC: 'BINANCE:BTCUSDT',
+  USDC: 'BINANCE:USDCUSDT', USDT: 'BINANCE:USDTUSD', SOL: 'BINANCE:SOLUSDT',
+  LINK: 'BINANCE:LINKUSDT', UNI: 'BINANCE:UNIUSDT', AAVE: 'BINANCE:AAVEUSDT',
+  DOGE: 'BINANCE:DOGEUSDT', ARB: 'BINANCE:ARBUSDT', OP: 'BINANCE:OPUSDT',
+  MATIC: 'BINANCE:MATICUSDT', DAI: 'BINANCE:DAIUSDT', MKR: 'BINANCE:MKRUSDT',
+  CRV: 'BINANCE:CRVUSDT', SUSHI: 'BINANCE:SUSHIUSDT', SHIB: 'BINANCE:SHIBUSDT',
+  PEPE: 'BINANCE:PEPEUSDT', APE: 'BINANCE:APEUSDT', LDO: 'BINANCE:LDOUSDT',
+};
 
 const Index = () => {
   const [fromChain, setFromChain] = useState<Chain>(chains[0]);
@@ -20,21 +33,13 @@ const Index = () => {
   const [tokenModalOpen, setTokenModalOpen] = useState(false);
   const [tokenModalField, setTokenModalField] = useState<'from' | 'to'>('from');
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [chartOpen, setChartOpen] = useState(false);
   const [slippage, setSlippage] = useState('0.5');
 
   const fromTokens = getTokenListByChain(fromChain.id);
   const toTokens = getTokenListByChain(toChain.id);
 
-  const handleFromChainChange = (chain: Chain) => {
-    setFromChain(chain);
-    setFromToken(null);
-  };
-
-  const handleToChainChange = (chain: Chain) => {
-    setToChain(chain);
-    setToToken(null);
-  };
+  const handleFromChainChange = (chain: Chain) => { setFromChain(chain); setFromToken(null); };
+  const handleToChainChange = (chain: Chain) => { setToChain(chain); setToToken(null); };
 
   const handleOpenTokenModal = (field: 'from' | 'to') => {
     setTokenModalField(field);
@@ -42,51 +47,41 @@ const Index = () => {
   };
 
   const handleSelectToken = (token: Token) => {
-    if (tokenModalField === 'from') {
-      setFromToken(token);
-    } else {
-      setToToken(token);
-    }
+    if (tokenModalField === 'from') setFromToken(token);
+    else setToToken(token);
   };
+
+  const tvSymbol = TV_SYMBOL_MAP[fromToken?.symbol || 'ETH'] || 'BINANCE:ETHUSDT';
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'swap':
         return (
-          <CompleteSwapInterface
-            tokens={tokenModalField === 'from' ? fromTokens : toTokens}
-            onOpenTokenModal={handleOpenTokenModal}
-            fromToken={fromToken}
-            toToken={toToken}
-            onOpenSettings={() => setSettingsOpen(true)}
-            fromChain={fromChain}
-            toChain={toChain}
-            onFromChainChange={handleFromChainChange}
-            onToChainChange={handleToChainChange}
-          />
+          <div className="flex flex-col lg:flex-row gap-6 items-start w-full max-w-6xl mx-auto">
+            <CompleteSwapInterface
+              tokens={tokenModalField === 'from' ? fromTokens : toTokens}
+              onOpenTokenModal={handleOpenTokenModal}
+              fromToken={fromToken}
+              toToken={toToken}
+              onOpenSettings={() => setSettingsOpen(true)}
+              fromChain={fromChain}
+              toChain={toChain}
+              onFromChainChange={handleFromChainChange}
+              onToChainChange={handleToChainChange}
+            />
+            <div className="flex-1 w-full min-w-0 hidden lg:block">
+              <TradingViewWidget symbol={tvSymbol} height={520} />
+            </div>
+          </div>
         );
       case 'perpetuals':
         return <PerpetualsPage />;
       case 'lend':
         return <LendingPage />;
       case 'predictions':
-        return (
-          <div className="w-full max-w-md mx-auto text-center py-16">
-            <div className="text-6xl mb-4">🔮</div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">Predictions</h3>
-            <p className="text-muted-foreground">Predict price movements and earn rewards</p>
-            <p className="text-sm text-muted-foreground mt-4">Coming soon...</p>
-          </div>
-        );
+        return <PredictionsPage />;
       case 'bridge':
-        return (
-          <div className="w-full max-w-md mx-auto text-center py-16">
-            <div className="text-6xl mb-4">🌉</div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">Bridge</h3>
-            <p className="text-muted-foreground">Transfer assets across different chains</p>
-            <p className="text-sm text-muted-foreground mt-4">Coming soon...</p>
-          </div>
-        );
+        return <BridgePage />;
       default:
         return null;
     }
@@ -97,7 +92,6 @@ const Index = () => {
       <Header
         selectedChain={fromChain}
         onSelectChain={handleFromChainChange}
-        onOpenChart={() => setChartOpen(true)}
       />
 
       <div className="container mx-auto px-4 py-8 pb-24">
@@ -120,8 +114,6 @@ const Index = () => {
         slippage={slippage}
         onSlippageChange={setSlippage}
       />
-
-      <ChartModal isOpen={chartOpen} onClose={() => setChartOpen(false)} />
     </div>
   );
 };
