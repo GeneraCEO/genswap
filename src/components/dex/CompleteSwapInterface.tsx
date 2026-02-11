@@ -3,6 +3,7 @@ import { Token, Chain } from '../../types';
 import { Settings, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { TokenLogo } from './TokenLogo';
+import { useCoinGeckoPrices } from '@/hooks/useCoinGeckoPrices';
 
 interface CompleteSwapInterfaceProps {
   tokens: Token[];
@@ -25,14 +26,19 @@ export function CompleteSwapInterface({
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [isSwapping, setIsSwapping] = useState(false);
+  const { data: prices } = useCoinGeckoPrices();
+
+  const fromPrice = prices?.[fromToken?.symbol || '']?.usd || 0;
+  const toPrice = prices?.[toToken?.symbol || '']?.usd || 0;
+  const exchangeRate = toPrice > 0 ? fromPrice / toPrice : 0;
 
   const handlePercentageClick = (percentage: number) => {
     if (fromToken) {
       const balance = parseFloat(fromToken.balance);
       const amount = ((balance * percentage) / 100).toFixed(6);
       setFromAmount(amount);
-      if (toToken) {
-        setToAmount((parseFloat(amount) * 1500).toFixed(2));
+      if (toToken && exchangeRate > 0) {
+        setToAmount((parseFloat(amount) * exchangeRate).toFixed(6));
       }
     }
   };
@@ -48,16 +54,19 @@ export function CompleteSwapInterface({
   const handleFromAmountChange = (value: string) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setFromAmount(value);
-      if (value && toToken) {
-        setToAmount((parseFloat(value || '0') * 1500).toFixed(2));
+      if (value && toToken && exchangeRate > 0) {
+        setToAmount((parseFloat(value || '0') * exchangeRate).toFixed(6));
       } else {
         setToAmount('');
       }
     }
   };
 
+  const fromUsdValue = fromAmount && fromPrice ? (parseFloat(fromAmount) * fromPrice).toFixed(2) : '';
+  const toUsdValue = toAmount && toPrice ? (parseFloat(toAmount) * toPrice).toFixed(2) : '';
+
   return (
-    <div className="w-full max-w-[480px] mx-auto">
+    <div className="w-full max-w-[480px] mx-auto lg:mx-0">
       <div className="rounded-3xl border-2 border-primary/40 bg-background p-1 shadow-2xl shadow-primary/10">
         <div className="bg-background rounded-[22px] p-5 sm:p-6">
           {/* Header */}
@@ -84,8 +93,7 @@ export function CompleteSwapInterface({
                 )}
               </div>
 
-              {/* Amount + Token Select Row */}
-              <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center gap-3 mb-1">
                 <input
                   type="text"
                   value={fromAmount}
@@ -108,8 +116,8 @@ export function CompleteSwapInterface({
                   <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
+              {fromUsdValue && <div className="text-xs text-muted-foreground mb-3">≈ ${fromUsdValue}</div>}
 
-              {/* Percentage Buttons */}
               <div className="grid grid-cols-4 gap-2">
                 {[25, 50, 75].map((pct) => (
                   <button
@@ -132,7 +140,7 @@ export function CompleteSwapInterface({
             </div>
           </div>
 
-          {/* SWAP ARROWS - animated */}
+          {/* SWAP ARROWS */}
           <div className="flex justify-center -my-3 relative z-10">
             <motion.button
               onClick={handleSwapTokens}
@@ -162,7 +170,6 @@ export function CompleteSwapInterface({
                 )}
               </div>
 
-              {/* Amount + Token Select Row */}
               <div className="flex items-center gap-3">
                 <input
                   type="text"
@@ -186,18 +193,25 @@ export function CompleteSwapInterface({
                   <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
+              {toUsdValue && <div className="text-xs text-muted-foreground mt-1">≈ ${toUsdValue}</div>}
             </div>
           </div>
 
           {/* Price Info */}
-          {fromToken && toToken && fromAmount && (
+          {fromToken && toToken && exchangeRate > 0 && (
             <div className="mb-4 p-3 rounded-xl bg-card border border-border">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">Exchange Rate</span>
                 <span className="text-foreground font-medium">
-                  1 {fromToken.symbol} ≈ 1,500 {toToken.symbol}
+                  1 {fromToken.symbol} ≈ {exchangeRate.toFixed(exchangeRate > 1 ? 2 : 6)} {toToken.symbol}
                 </span>
               </div>
+              {fromPrice > 0 && (
+                <div className="flex items-center justify-between text-sm mt-1">
+                  <span className="text-muted-foreground">{fromToken.symbol} Price</span>
+                  <span className="text-foreground font-medium">${fromPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                </div>
+              )}
             </div>
           )}
 

@@ -1,0 +1,77 @@
+import { useQuery } from '@tanstack/react-query';
+
+export interface PolymarketMarket {
+  id: string;
+  question: string;
+  description: string;
+  outcomePrices: string;
+  volume: string;
+  volume24hr: number;
+  liquidity: string;
+  endDate: string;
+  image: string;
+  icon: string;
+  active: boolean;
+  closed: boolean;
+  outcomes: string;
+  category: string;
+}
+
+export interface ParsedMarket {
+  id: string;
+  question: string;
+  description: string;
+  yesPrice: number;
+  noPrice: number;
+  volume: number;
+  volume24hr: number;
+  liquidity: number;
+  endDate: string;
+  image: string;
+  category: string;
+}
+
+export function usePolymarketData() {
+  return useQuery({
+    queryKey: ['polymarket-markets'],
+    queryFn: async () => {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/polymarket-data?action=markets`;
+      const res = await fetch(url, {
+        headers: { 'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch Polymarket data');
+      const raw: PolymarketMarket[] = await res.json();
+
+      const parsed: ParsedMarket[] = raw
+        .filter((m) => m.active && !m.closed)
+        .map((m) => {
+          let yesPrice = 0.5;
+          let noPrice = 0.5;
+          try {
+            const prices = JSON.parse(m.outcomePrices || '[]');
+            yesPrice = parseFloat(prices[0] || '0.5');
+            noPrice = parseFloat(prices[1] || '0.5');
+          } catch { /* fallback */ }
+
+          return {
+            id: m.id,
+            question: m.question,
+            description: m.description || '',
+            yesPrice,
+            noPrice,
+            volume: parseFloat(m.volume || '0'),
+            volume24hr: m.volume24hr || 0,
+            liquidity: parseFloat(m.liquidity || '0'),
+            endDate: m.endDate,
+            image: m.image || m.icon || '',
+            category: m.category || 'General',
+          };
+        });
+
+      return parsed;
+    },
+    refetchInterval: 60000,
+    staleTime: 30000,
+  });
+}
