@@ -82,7 +82,7 @@ export function CompleteSwapInterface({
 
           {/* PAY SECTION */}
           <div className="mb-2">
-            <div className="rounded-2xl border-2 border-primary/60 bg-card p-5">
+            <div className="rounded-2xl bg-card p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold text-muted-foreground">Pay</span>
                 {fromToken && (
@@ -159,7 +159,7 @@ export function CompleteSwapInterface({
 
           {/* RECEIVE SECTION */}
           <div className="mb-5">
-            <div className="rounded-2xl border-2 border-primary/60 bg-card p-5">
+            <div className="rounded-2xl bg-card p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-semibold text-muted-foreground">Receive</span>
                 {toToken && (
