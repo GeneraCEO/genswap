@@ -1,4 +1,4 @@
-import { ArrowLeftRight, BarChart3, Target, Landmark, Coins, LayoutDashboard } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, Target, Layers, Coins, LayoutDashboard } from 'lucide-react';
 
 export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend' | 'portfolio';
 
@@ -7,33 +7,42 @@ interface BottomNavigationProps {
   onTabChange: (tab: Tab) => void;
 }
 
-const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'swap', label: 'Swap', icon: <ArrowLeftRight className="w-5 h-5" /> },
-  { id: 'perpetuals', label: 'Perps', icon: <BarChart3 className="w-5 h-5" /> },
-  { id: 'predictions', label: 'Predict', icon: <Target className="w-5 h-5" /> },
-  { id: 'bridge', label: 'Bridge', icon: <Landmark className="w-5 h-5" /> },
-  { id: 'lend', label: 'Lend', icon: <Coins className="w-5 h-5" /> },
-  { id: 'portfolio', label: 'Portfolio', icon: <LayoutDashboard className="w-5 h-5" /> },
-];
-
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
+  const tabs: { id: Tab; label: string; icon: JSX.Element }[] = [
+    { id: 'swap', label: 'Swap', icon: <ArrowLeftRight className="w-5 h-5" /> },
+    { id: 'perpetuals', label: 'Perps', icon: <TrendingUp className="w-5 h-5" /> },
+    { id: 'predictions', label: 'Predict', icon: <Target className="w-5 h-5" /> },
+    { id: 'bridge', label: 'Bridge', icon: <Layers className="w-5 h-5" /> },
+    { id: 'lend', label: 'Lend', icon: <Coins className="w-5 h-5" /> },
+    { id: 'portfolio', label: 'Portfolio', icon: <LayoutDashboard className="w-5 h-5" /> },
+  ];
+
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur-sm border-t border-border z-50">
-      <div className="flex items-center justify-around max-w-md mx-auto py-2">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => onTabChange(tab.id)}
-            className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all ${
-              activeTab === tab.id
-                ? 'text-primary'
-                : 'text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab.icon}
-            <span className="text-xs font-medium">{tab.label}</span>
-          </button>
-        ))}
+    <nav className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-3">
+      <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-1 max-w-2xl mx-auto">
+        <div className="grid grid-cols-6 gap-0.5">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onTabChange(tab.id)}
+                className={`
+                  relative flex flex-col items-center justify-center gap-1.5 py-3 px-2 rounded-xl transition-all duration-200
+                  ${isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
+                  }
+                `}
+              >
+                {tab.icon}
+                <span className="text-xs font-medium">
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );
