@@ -1,6 +1,6 @@
-import { ArrowLeftRight, BarChart3, Target, Landmark, Coins } from 'lucide-react';
+import { ArrowLeftRight, BarChart3, Target, Landmark, Coins, LayoutDashboard } from 'lucide-react';
 
-export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend';
+export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend' | 'portfolio';
 
 interface BottomNavigationProps {
   activeTab: Tab;
@@ -13,6 +13,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'predictions', label: 'Predict', icon: <Target className="w-5 h-5" /> },
   { id: 'bridge', label: 'Bridge', icon: <Landmark className="w-5 h-5" /> },
   { id: 'lend', label: 'Lend', icon: <Coins className="w-5 h-5" /> },
+  { id: 'portfolio', label: 'Portfolio', icon: <LayoutDashboard className="w-5 h-5" /> },
 ];
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
