@@ -53,7 +53,7 @@ serve(async (req) => {
 
     switch (action) {
       case "markets":
-        apiUrl = `${GAMMA_API}/markets?closed=false&limit=20&order=volume&ascending=false`;
+        apiUrl = `${GAMMA_API}/markets?closed=false&limit=50&order=volume&ascending=false`;
         break;
       case "events":
         apiUrl = `${GAMMA_API}/events?closed=false&limit=20&order=volume&ascending=false`;
