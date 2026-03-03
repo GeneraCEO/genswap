@@ -1,26 +1,25 @@
 // TrustWallet CDN for real token logos
-const TRUSTWALLET_CDN = 'https://raw.githubusercontent.com/nichanank/trust-assets/master/blockchains';
 const TRUSTWALLET_ASSETS = 'https://assets-cdn.trustwallet.com/blockchains';
 
-// Map chain IDs to their logo URLs
+// Map chain IDs to their logo URLs (TrustWallet CDN + reliable fallbacks)
 export const CHAIN_LOGOS: Record<string, string> = {
-  ethereum: 'https://assets-cdn.trustwallet.com/blockchains/ethereum/info/logo.png',
-  bnb: 'https://assets-cdn.trustwallet.com/blockchains/binance/info/logo.png',
-  arbitrum: 'https://assets-cdn.trustwallet.com/blockchains/arbitrum/info/logo.png',
-  optimism: 'https://assets-cdn.trustwallet.com/blockchains/optimism/info/logo.png',
-  polygon: 'https://assets-cdn.trustwallet.com/blockchains/polygon/info/logo.png',
-  avalanche: 'https://assets-cdn.trustwallet.com/blockchains/avalanchec/info/logo.png',
-  solana: 'https://assets-cdn.trustwallet.com/blockchains/solana/info/logo.png',
-  base: 'https://assets-cdn.trustwallet.com/blockchains/base/info/logo.png',
-  sui: 'https://assets-cdn.trustwallet.com/blockchains/sui/info/logo.png',
-  ton: 'https://assets-cdn.trustwallet.com/blockchains/ton/info/logo.png',
-  polkadot: 'https://assets-cdn.trustwallet.com/blockchains/polkadot/info/logo.png',
-  ripple: 'https://assets-cdn.trustwallet.com/blockchains/xrp/info/logo.png',
-  tron: 'https://assets-cdn.trustwallet.com/blockchains/tron/info/logo.png',
-  monero: 'https://cryptologos.cc/logos/monero-xmr-logo.png',
-  zcash: 'https://cryptologos.cc/logos/zcash-zec-logo.png',
-  hyperevm: 'https://cryptologos.cc/logos/hyperliquid-hype-logo.png',
-  ton_crystal: 'https://assets-cdn.trustwallet.com/blockchains/ton/info/logo.png',
+  ethereum: `${TRUSTWALLET_ASSETS}/ethereum/info/logo.png`,
+  bnb: `${TRUSTWALLET_ASSETS}/binance/info/logo.png`,
+  arbitrum: `${TRUSTWALLET_ASSETS}/arbitrum/info/logo.png`,
+  optimism: `${TRUSTWALLET_ASSETS}/optimism/info/logo.png`,
+  polygon: `${TRUSTWALLET_ASSETS}/polygon/info/logo.png`,
+  avalanche: `${TRUSTWALLET_ASSETS}/avalanchec/info/logo.png`,
+  solana: `${TRUSTWALLET_ASSETS}/solana/info/logo.png`,
+  base: `${TRUSTWALLET_ASSETS}/base/info/logo.png`,
+  sui: `${TRUSTWALLET_ASSETS}/sui/info/logo.png`,
+  ton: `${TRUSTWALLET_ASSETS}/ton/info/logo.png`,
+  polkadot: `${TRUSTWALLET_ASSETS}/polkadot/info/logo.png`,
+  ripple: `${TRUSTWALLET_ASSETS}/xrp/info/logo.png`,
+  tron: `${TRUSTWALLET_ASSETS}/tron/info/logo.png`,
+  hyperevm: 'https://s2.coinmarketcap.com/static/img/coins/64x64/30323.png',
+  monero: `${TRUSTWALLET_ASSETS}/monero/info/logo.png`,
+  zcash: `${TRUSTWALLET_ASSETS}/zcash/info/logo.png`,
+  ton_crystal: `${TRUSTWALLET_ASSETS}/ton/info/logo.png`,
 };
 
 // Get token logo from TrustWallet CDN using contract address

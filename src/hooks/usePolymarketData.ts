@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 
 export interface PolymarketMarket {
   id: string;
@@ -31,6 +31,34 @@ export interface ParsedMarket {
   category: string;
 }
 
+function parseMarkets(raw: PolymarketMarket[]): ParsedMarket[] {
+  return raw
+    .filter((m) => m.active && !m.closed)
+    .map((m) => {
+      let yesPrice = 0.5;
+      let noPrice = 0.5;
+      try {
+        const prices = JSON.parse(m.outcomePrices || '[]');
+        yesPrice = parseFloat(prices[0] || '0.5');
+        noPrice = parseFloat(prices[1] || '0.5');
+      } catch { /* fallback */ }
+
+      return {
+        id: m.id,
+        question: m.question,
+        description: m.description || '',
+        yesPrice,
+        noPrice,
+        volume: parseFloat(m.volume || '0'),
+        volume24hr: m.volume24hr || 0,
+        liquidity: parseFloat(m.liquidity || '0'),
+        endDate: m.endDate,
+        image: m.image || m.icon || '',
+        category: m.category || 'General',
+      };
+    });
+}
+
 export function usePolymarketData() {
   return useQuery({
     queryKey: ['polymarket-markets'],
@@ -42,35 +70,30 @@ export function usePolymarketData() {
 
       if (!res.ok) throw new Error('Failed to fetch Polymarket data');
       const raw: PolymarketMarket[] = await res.json();
-
-      const parsed: ParsedMarket[] = raw
-        .filter((m) => m.active && !m.closed)
-        .map((m) => {
-          let yesPrice = 0.5;
-          let noPrice = 0.5;
-          try {
-            const prices = JSON.parse(m.outcomePrices || '[]');
-            yesPrice = parseFloat(prices[0] || '0.5');
-            noPrice = parseFloat(prices[1] || '0.5');
-          } catch { /* fallback */ }
-
-          return {
-            id: m.id,
-            question: m.question,
-            description: m.description || '',
-            yesPrice,
-            noPrice,
-            volume: parseFloat(m.volume || '0'),
-            volume24hr: m.volume24hr || 0,
-            liquidity: parseFloat(m.liquidity || '0'),
-            endDate: m.endDate,
-            image: m.image || m.icon || '',
-            category: m.category || 'General',
-          };
-        });
-
-      return parsed;
+      return parseMarkets(raw);
     },
+    refetchInterval: 60000,
+    staleTime: 30000,
+  });
+}
+
+export function usePolymarketInfinite() {
+  return useInfiniteQuery({
+    queryKey: ['polymarket-infinite'],
+    queryFn: async ({ pageParam = 0 }) => {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/polymarket-data?action=markets&offset=${pageParam}`;
+      const res = await fetch(url, {
+        headers: { 'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
+      });
+      if (!res.ok) throw new Error('Failed to fetch');
+      const raw: PolymarketMarket[] = await res.json();
+      return parseMarkets(raw);
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage.length < 50) return undefined;
+      return allPages.length * 50;
+    },
+    initialPageParam: 0,
     refetchInterval: 60000,
     staleTime: 30000,
   });

@@ -66,29 +66,29 @@ export function CompleteSwapInterface({
   const toUsdValue = toAmount && toPrice ? (parseFloat(toAmount) * toPrice).toFixed(2) : '';
 
   return (
-    <div className="w-full max-w-[480px] mx-auto lg:mx-0">
-      <div className="rounded-3xl border-2 border-primary/40 bg-background p-1 shadow-2xl shadow-primary/10">
-        <div className="bg-background rounded-[22px] p-5 sm:p-6">
+    <div className="w-full max-w-[520px] mx-auto lg:mx-0">
+      <div className="rounded-2xl border border-border bg-card p-1 shadow-sm">
+        <div className="bg-card rounded-[14px] p-5 sm:p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-5">
-            <h2 className="text-2xl font-bold text-foreground">Swap</h2>
+            <h2 className="text-xl font-semibold text-foreground">Swap</h2>
             <button
               onClick={onOpenSettings}
-              className="p-2.5 rounded-xl hover:bg-secondary transition-all text-muted-foreground hover:text-foreground border border-border hover:border-primary"
+              className="p-2 rounded-lg hover:bg-secondary transition-all text-muted-foreground hover:text-foreground border border-border"
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-4 h-4" />
             </button>
           </div>
 
           {/* PAY SECTION */}
           <div className="mb-2">
-            <div className="rounded-2xl bg-card p-5">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-muted-foreground">Pay</span>
+            <div className="rounded-xl bg-background p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-muted-foreground">Pay</span>
                 {fromToken && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <span className="text-xs text-muted-foreground">Balance:</span>
-                    <span className="text-sm font-bold text-foreground">{fromToken.balance}</span>
+                    <span className="text-xs font-medium text-foreground">{fromToken.balance}</span>
                   </div>
                 )}
               </div>
@@ -99,32 +99,32 @@ export function CompleteSwapInterface({
                   value={fromAmount}
                   onChange={(e) => handleFromAmountChange(e.target.value)}
                   placeholder="0.0"
-                  className="flex-1 bg-transparent text-4xl font-bold outline-none text-foreground placeholder-muted-foreground/30 min-w-0"
+                  className="flex-1 bg-transparent text-3xl font-semibold outline-none text-foreground placeholder-muted-foreground/30 min-w-0"
                 />
                 <button
                   onClick={() => onOpenTokenModal('from')}
-                  className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 px-4 py-3 rounded-2xl transition-all border border-border hover:border-primary shrink-0"
+                  className="flex items-center gap-2 bg-card hover:bg-secondary px-3 py-2.5 rounded-xl transition-all border border-border shrink-0"
                 >
                   {fromToken ? (
                     <>
-                      <TokenLogo address={fromToken.address} symbol={fromToken.symbol} size="md" />
-                      <span className="font-bold text-foreground text-base">{fromToken.symbol}</span>
+                      <TokenLogo address={fromToken.address} symbol={fromToken.symbol} size="sm" />
+                      <span className="font-medium text-foreground text-sm">{fromToken.symbol}</span>
                     </>
                   ) : (
-                    <span className="font-bold text-foreground whitespace-nowrap">Select</span>
+                    <span className="font-medium text-foreground text-sm whitespace-nowrap">Select</span>
                   )}
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
               </div>
-              {fromUsdValue && <div className="text-xs text-muted-foreground mb-3">≈ ${fromUsdValue}</div>}
+              {fromUsdValue && <div className="text-xs text-muted-foreground">≈ ${fromUsdValue}</div>}
 
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-1.5 mt-3">
                 {[25, 50, 75].map((pct) => (
                   <button
                     key={pct}
                     onClick={() => handlePercentageClick(pct)}
                     disabled={!fromToken}
-                    className="px-3 py-2 rounded-lg text-xs font-bold bg-secondary hover:bg-secondary/80 text-foreground transition-all border border-border hover:border-primary disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-2 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-secondary text-foreground transition-all border border-border disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {pct}%
                   </button>
@@ -132,7 +132,7 @@ export function CompleteSwapInterface({
                 <button
                   onClick={() => handlePercentageClick(100)}
                   disabled={!fromToken}
-                  className="px-3 py-2 rounded-lg text-xs font-bold bg-accent text-accent-foreground transition-all shadow-md hover:shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="px-2 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary transition-all hover:bg-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   MAX
                 </button>
@@ -146,11 +146,11 @@ export function CompleteSwapInterface({
               onClick={handleSwapTokens}
               animate={{ rotate: isSwapping ? 180 : 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-              whileHover={{ scale: 1.15 }}
+              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-3 rounded-xl bg-card border-2 border-primary shadow-lg shadow-primary/20 cursor-pointer"
+              className="p-2.5 rounded-lg bg-card border border-border shadow-sm cursor-pointer"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--dex-cyan))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 3v18" /><path d="m3 7 4-4 4 4" />
                 <path d="M17 21V3" /><path d="m13 17 4 4 4-4" />
               </svg>
@@ -158,14 +158,14 @@ export function CompleteSwapInterface({
           </div>
 
           {/* RECEIVE SECTION */}
-          <div className="mb-5">
-            <div className="rounded-2xl bg-card p-5">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-semibold text-muted-foreground">Receive</span>
+          <div className="mb-4">
+            <div className="rounded-xl bg-background p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-muted-foreground">Receive</span>
                 {toToken && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <span className="text-xs text-muted-foreground">Balance:</span>
-                    <span className="text-sm font-bold text-foreground">{toToken.balance}</span>
+                    <span className="text-xs font-medium text-foreground">{toToken.balance}</span>
                   </div>
                 )}
               </div>
@@ -176,21 +176,21 @@ export function CompleteSwapInterface({
                   value={toAmount}
                   readOnly
                   placeholder="0.0"
-                  className="flex-1 bg-transparent text-4xl font-bold outline-none text-foreground placeholder-muted-foreground/30 min-w-0"
+                  className="flex-1 bg-transparent text-3xl font-semibold outline-none text-foreground placeholder-muted-foreground/30 min-w-0"
                 />
                 <button
                   onClick={() => onOpenTokenModal('to')}
-                  className="flex items-center gap-2 bg-secondary hover:bg-secondary/80 px-4 py-3 rounded-2xl transition-all border border-border hover:border-primary shrink-0"
+                  className="flex items-center gap-2 bg-card hover:bg-secondary px-3 py-2.5 rounded-xl transition-all border border-border shrink-0"
                 >
                   {toToken ? (
                     <>
-                      <TokenLogo address={toToken.address} symbol={toToken.symbol} size="md" />
-                      <span className="font-bold text-foreground text-base">{toToken.symbol}</span>
+                      <TokenLogo address={toToken.address} symbol={toToken.symbol} size="sm" />
+                      <span className="font-medium text-foreground text-sm">{toToken.symbol}</span>
                     </>
                   ) : (
-                    <span className="font-bold text-foreground whitespace-nowrap">Select</span>
+                    <span className="font-medium text-foreground text-sm whitespace-nowrap">Select</span>
                   )}
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                  <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
               </div>
               {toUsdValue && <div className="text-xs text-muted-foreground mt-1">≈ ${toUsdValue}</div>}
@@ -199,15 +199,15 @@ export function CompleteSwapInterface({
 
           {/* Price Info */}
           {fromToken && toToken && exchangeRate > 0 && (
-            <div className="mb-4 p-3 rounded-xl bg-card border border-border">
-              <div className="flex items-center justify-between text-sm">
+            <div className="mb-4 p-3 rounded-lg bg-background border border-border">
+              <div className="flex items-center justify-between text-xs">
                 <span className="text-muted-foreground">Exchange Rate</span>
                 <span className="text-foreground font-medium">
                   1 {fromToken.symbol} ≈ {exchangeRate.toFixed(exchangeRate > 1 ? 2 : 6)} {toToken.symbol}
                 </span>
               </div>
               {fromPrice > 0 && (
-                <div className="flex items-center justify-between text-sm mt-1">
+                <div className="flex items-center justify-between text-xs mt-1">
                   <span className="text-muted-foreground">{fromToken.symbol} Price</span>
                   <span className="text-foreground font-medium">${fromPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                 </div>
@@ -218,10 +218,10 @@ export function CompleteSwapInterface({
           {/* Swap Button */}
           <button
             disabled={!fromToken || !toToken || !fromAmount}
-            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all ${
+            className={`w-full py-3.5 rounded-xl font-semibold text-sm transition-all ${
               !fromToken || !toToken || !fromAmount
                 ? 'bg-secondary text-muted-foreground cursor-not-allowed border border-border'
-                : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-primary/50 border-2 border-primary'
+                : 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-md shadow-primary/20'
             }`}
           >
             {!fromToken || !toToken ? 'Select Tokens' : !fromAmount ? 'Enter Amount' : 'Swap'}
