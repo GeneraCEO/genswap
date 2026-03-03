@@ -1,6 +1,6 @@
-import { ArrowLeftRight, TrendingUp, Target, Layers, Coins, LayoutDashboard } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, Target, Layers, Coins } from 'lucide-react';
 
-export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend' | 'portfolio';
+export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend';
 
 interface BottomNavigationProps {
   activeTab: Tab;
@@ -14,13 +14,12 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
     { id: 'predictions', label: 'Predict', icon: <Target className="w-5 h-5" /> },
     { id: 'bridge', label: 'Bridge', icon: <Layers className="w-5 h-5" /> },
     { id: 'lend', label: 'Lend', icon: <Coins className="w-5 h-5" /> },
-    { id: 'portfolio', label: 'Portfolio', icon: <LayoutDashboard className="w-5 h-5" /> },
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-3">
-      <div className="bg-card/80 backdrop-blur-sm rounded-2xl border border-border p-1 max-w-2xl mx-auto">
-        <div className="grid grid-cols-6 gap-0.5">
+      <div className="bg-card/90 backdrop-blur-md rounded-2xl border border-border p-1 max-w-xl mx-auto shadow-lg">
+        <div className="grid grid-cols-5 gap-0.5">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (

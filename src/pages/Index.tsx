@@ -9,7 +9,6 @@ import { LendingPage } from '../components/dex/LendingPage';
 import { PredictionsPage } from '../components/dex/PredictionsPage';
 import { BridgePage } from '../components/dex/BridgePage';
 import { TradingViewWidget } from '../components/dex/TradingViewWidget';
-import { PortfolioPage } from '../components/dex/PortfolioPage';
 import { chains } from '../data/chains';
 import { getTokenListByChain } from '../data/tokenList';
 import { Chain, Token } from '../types';
@@ -83,8 +82,6 @@ const Index = () => {
         return <PredictionsPage />;
       case 'bridge':
         return <BridgePage />;
-      case 'portfolio':
-        return <PortfolioPage />;
       default:
         return null;
     }
