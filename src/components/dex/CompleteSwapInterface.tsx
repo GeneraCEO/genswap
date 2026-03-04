@@ -26,6 +26,7 @@ export function CompleteSwapInterface({
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
   const [isSwapping, setIsSwapping] = useState(false);
+  const [activePercent, setActivePercent] = useState<number | null>(null);
   const { data: prices } = useCoinGeckoPrices();
 
   const fromPrice = prices?.[fromToken?.symbol || '']?.usd || 0;
@@ -34,6 +35,7 @@ export function CompleteSwapInterface({
 
   const handlePercentageClick = (percentage: number) => {
     if (fromToken) {
+      setActivePercent(activePercent === percentage ? null : percentage);
       const balance = parseFloat(fromToken.balance);
       const amount = ((balance * percentage) / 100).toFixed(6);
       setFromAmount(amount);
@@ -48,12 +50,14 @@ export function CompleteSwapInterface({
     const tempAmount = fromAmount;
     setFromAmount(toAmount);
     setToAmount(tempAmount);
+    setActivePercent(null);
     setTimeout(() => setIsSwapping(false), 400);
   };
 
   const handleFromAmountChange = (value: string) => {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       setFromAmount(value);
+      setActivePercent(null);
       if (value && toToken && exchangeRate > 0) {
         setToAmount((parseFloat(value || '0') * exchangeRate).toFixed(6));
       } else {
@@ -82,7 +86,7 @@ export function CompleteSwapInterface({
 
           {/* PAY SECTION */}
           <div className="mb-2">
-            <div className="rounded-xl bg-background p-4">
+            <div className="rounded-xl bg-background p-4 border border-[hsl(var(--dex-purple)/0.25)] hover:border-[hsl(var(--dex-purple)/0.4)] transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-muted-foreground">Pay</span>
                 {fromToken && (
@@ -118,13 +122,18 @@ export function CompleteSwapInterface({
               </div>
               {fromUsdValue && <div className="text-xs text-muted-foreground">≈ ${fromUsdValue}</div>}
 
-              <div className="grid grid-cols-4 gap-1.5 mt-3">
-                {[25, 50, 75].map((pct) => (
+              {/* Percentage Buttons */}
+              <div className="grid grid-cols-5 gap-1.5 mt-3">
+                {[25, 50, 75, 100].map((pct) => (
                   <button
                     key={pct}
                     onClick={() => handlePercentageClick(pct)}
                     disabled={!fromToken}
-                    className="px-2 py-1.5 rounded-lg text-xs font-medium bg-card hover:bg-secondary text-foreground transition-all border border-border disabled:opacity-40 disabled:cursor-not-allowed"
+                    className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-all border disabled:opacity-40 disabled:cursor-not-allowed ${
+                      activePercent === pct
+                        ? 'bg-primary/15 text-primary border-primary/40'
+                        : 'bg-card hover:bg-secondary text-foreground border-border'
+                    }`}
                   >
                     {pct}%
                   </button>
@@ -132,7 +141,11 @@ export function CompleteSwapInterface({
                 <button
                   onClick={() => handlePercentageClick(100)}
                   disabled={!fromToken}
-                  className="px-2 py-1.5 rounded-lg text-xs font-medium bg-primary/10 text-primary transition-all hover:bg-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className={`px-2 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                    activePercent === 100
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-primary/10 text-primary hover:bg-primary/20'
+                  } disabled:opacity-40 disabled:cursor-not-allowed`}
                 >
                   MAX
                 </button>
@@ -148,7 +161,7 @@ export function CompleteSwapInterface({
               transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              className="p-2.5 rounded-lg bg-card border border-border shadow-sm cursor-pointer"
+              className="p-2.5 rounded-lg bg-card border border-[hsl(var(--dex-purple)/0.3)] shadow-sm cursor-pointer"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 3v18" /><path d="m3 7 4-4 4 4" />
@@ -159,7 +172,7 @@ export function CompleteSwapInterface({
 
           {/* RECEIVE SECTION */}
           <div className="mb-4">
-            <div className="rounded-xl bg-background p-4">
+            <div className="rounded-xl bg-background p-4 border border-[hsl(var(--dex-purple)/0.25)] hover:border-[hsl(var(--dex-purple)/0.4)] transition-colors">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-medium text-muted-foreground">Receive</span>
                 {toToken && (

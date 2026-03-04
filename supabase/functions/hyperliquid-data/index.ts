@@ -7,7 +7,6 @@ const corsHeaders = {
 
 const HYPERLIQUID_API = "https://api.hyperliquid.xyz";
 
-// Simple in-memory rate limiter (per IP, 30 requests per minute)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT = 30;
 const WINDOW_MS = 60_000;
@@ -23,7 +22,7 @@ function isRateLimited(ip: string): boolean {
   return entry.count > RATE_LIMIT;
 }
 
-const ALLOWED_ACTIONS = ["meta", "allMids", "fundingHistory", "candleSnapshot"];
+const ALLOWED_ACTIONS = ["meta", "allMids", "fundingHistory", "candleSnapshot", "placeOrder"];
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -45,6 +44,28 @@ serve(async (req) => {
     if (!ALLOWED_ACTIONS.includes(action)) {
       return new Response(JSON.stringify({ error: "Invalid action" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Handle order placement (POST)
+    if (action === "placeOrder" && req.method === "POST") {
+      const orderData = await req.json();
+      
+      // Forward the order to Hyperliquid exchange API
+      // Note: In production, this would require the user's signed EIP-712 typed data
+      // For now we simulate order acceptance
+      const response = {
+        status: "ok",
+        orderId: `HL-${Date.now()}`,
+        coin: orderData.coin,
+        side: orderData.isBuy ? "buy" : "sell",
+        size: orderData.sz,
+        price: orderData.limitPx,
+        timestamp: Date.now(),
+      };
+
+      return new Response(JSON.stringify(response), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
