@@ -239,7 +239,8 @@ function MarketCard({ market, onBet }: { market: ParsedMarket; onBet: (side: 'ye
 }
 
 export function PredictionsPage() {
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = usePolymarketInfinite();
+  const [activeTag, setActiveTag] = useState<string>('all');
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = usePolymarketInfinite(activeTag);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('volume');
   const [category, setCategory] = useState<Category>('all');
