@@ -3,7 +3,7 @@ import { usePolymarketInfinite, ParsedMarket } from '@/hooks/usePolymarketData';
 import { useAccount } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, Clock, DollarSign, Search, Flame, Wallet, X, Minus, Plus, Loader2 } from 'lucide-react';
+import { TrendingUp, Clock, DollarSign, Search, Flame, Wallet, X, Minus, Plus, Loader2, RefreshCw } from 'lucide-react';
 
 function formatVolume(vol: number): string {
   if (vol >= 1e9) return `$${(vol / 1e9).toFixed(1)}B`;
@@ -240,7 +240,7 @@ function MarketCard({ market, onBet }: { market: ParsedMarket; onBet: (side: 'ye
 
 export function PredictionsPage() {
   const [activeTag, setActiveTag] = useState<string>('all');
-  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = usePolymarketInfinite(activeTag);
+  const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage, dataUpdatedAt, isRefetching } = usePolymarketInfinite(activeTag);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortBy>('volume');
   const [category, setCategory] = useState<Category>('all');
@@ -297,8 +297,10 @@ export function PredictionsPage() {
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Live
           </div>
+          {isRefetching && <RefreshCw className="w-3 h-3 animate-spin text-primary" />}
           <span>{markets.length} Markets</span>
           <span>Vol: {formatVolume(totalVolume)}</span>
+          <span className="text-[10px]">Updated {new Date(dataUpdatedAt).toLocaleTimeString()}</span>
         </div>
       </div>
 

@@ -102,7 +102,7 @@ export function usePolymarketInfinite(tag?: string) {
       return allPages.length * PAGE_SIZE;
     },
     initialPageParam: 0,
-    refetchInterval: 60000,
-    staleTime: 30000,
+    refetchInterval: 15000,
+    staleTime: 10000,
   });
 }
