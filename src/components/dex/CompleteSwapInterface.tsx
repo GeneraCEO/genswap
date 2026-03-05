@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Token, Chain } from '../../types';
-import { Settings, ChevronDown } from 'lucide-react';
+import { Settings, ChevronDown, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { TokenLogo } from './TokenLogo';
+import { useChainlinkPrices } from '@/hooks/useChainlinkPrices';
 import { useCoinGeckoPrices } from '@/hooks/useCoinGeckoPrices';
 
 interface CompleteSwapInterfaceProps {
@@ -27,11 +28,25 @@ export function CompleteSwapInterface({
   const [toAmount, setToAmount] = useState('');
   const [isSwapping, setIsSwapping] = useState(false);
   const [activePercent, setActivePercent] = useState<number | null>(null);
-  const { data: prices } = useCoinGeckoPrices();
+  const { data: chainlinkPrices } = useChainlinkPrices();
+  const { data: cgPrices } = useCoinGeckoPrices();
 
-  const fromPrice = prices?.[fromToken?.symbol || '']?.usd || 0;
-  const toPrice = prices?.[toToken?.symbol || '']?.usd || 0;
+  // Prefer Chainlink, fallback to CoinGecko
+  const getPrice = (symbol: string): number => {
+    if (chainlinkPrices?.[symbol]?.usd) return chainlinkPrices[symbol].usd;
+    if (cgPrices?.[symbol]?.usd) return cgPrices[symbol].usd;
+    return 0;
+  };
+
+  const fromPrice = getPrice(fromToken?.symbol || '');
+  const toPrice = getPrice(toToken?.symbol || '');
   const exchangeRate = toPrice > 0 ? fromPrice / toPrice : 0;
+
+  const priceSource = (symbol: string): string => {
+    if (chainlinkPrices?.[symbol]?.usd) return 'Chainlink';
+    if (cgPrices?.[symbol]?.usd) return 'CoinGecko';
+    return '';
+  };
 
   const handlePercentageClick = (percentage: number) => {
     if (fromToken) {
@@ -76,12 +91,20 @@ export function CompleteSwapInterface({
           {/* Header */}
           <div className="flex justify-between items-center mb-5">
             <h2 className="text-xl font-semibold text-foreground">Swap</h2>
-            <button
-              onClick={onOpenSettings}
-              className="p-2 rounded-lg hover:bg-secondary transition-all text-muted-foreground hover:text-foreground border border-border"
-            >
-              <Settings className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              {fromToken && priceSource(fromToken.symbol) && (
+                <span className="text-[10px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <div className={`w-1.5 h-1.5 rounded-full ${priceSource(fromToken.symbol) === 'Chainlink' ? 'bg-blue-400' : 'bg-emerald-400'}`} />
+                  {priceSource(fromToken.symbol)}
+                </span>
+              )}
+              <button
+                onClick={onOpenSettings}
+                className="p-2 rounded-lg hover:bg-secondary transition-all text-muted-foreground hover:text-foreground border border-border"
+              >
+                <Settings className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* PAY SECTION */}
@@ -222,7 +245,23 @@ export function CompleteSwapInterface({
               {fromPrice > 0 && (
                 <div className="flex items-center justify-between text-xs mt-1">
                   <span className="text-muted-foreground">{fromToken.symbol} Price</span>
-                  <span className="text-foreground font-medium">${fromPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                  <span className="text-foreground font-medium">
+                    ${fromPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    {priceSource(fromToken.symbol) && (
+                      <span className="text-muted-foreground ml-1 text-[10px]">via {priceSource(fromToken.symbol)}</span>
+                    )}
+                  </span>
+                </div>
+              )}
+              {toPrice > 0 && (
+                <div className="flex items-center justify-between text-xs mt-1">
+                  <span className="text-muted-foreground">{toToken.symbol} Price</span>
+                  <span className="text-foreground font-medium">
+                    ${toPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    {priceSource(toToken.symbol) && (
+                      <span className="text-muted-foreground ml-1 text-[10px]">via {priceSource(toToken.symbol)}</span>
+                    )}
+                  </span>
                 </div>
               )}
             </div>
