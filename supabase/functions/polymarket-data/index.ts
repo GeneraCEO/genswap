@@ -53,12 +53,18 @@ serve(async (req) => {
 
     const offset = url.searchParams.get("offset") || "0";
 
+    const limit = url.searchParams.get("limit") || "100";
+    const tag = url.searchParams.get("tag") || "";
+
     switch (action) {
-      case "markets":
-        apiUrl = `${GAMMA_API}/markets?closed=false&limit=50&offset=${offset}&order=volume&ascending=false`;
+      case "markets": {
+        let q = `${GAMMA_API}/markets?closed=false&active=true&limit=${limit}&offset=${offset}&order=volume&ascending=false`;
+        if (tag && tag !== "all") q += `&tag=${encodeURIComponent(tag)}`;
+        apiUrl = q;
         break;
+      }
       case "events":
-        apiUrl = `${GAMMA_API}/events?closed=false&limit=20&order=volume&ascending=false`;
+        apiUrl = `${GAMMA_API}/events?closed=false&limit=${limit}&offset=${offset}&order=volume&ascending=false`;
         break;
       case "market": {
         const id = url.searchParams.get("id");

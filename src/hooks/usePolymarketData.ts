@@ -77,11 +77,19 @@ export function usePolymarketData() {
   });
 }
 
-export function usePolymarketInfinite() {
+const PAGE_SIZE = 100;
+
+export function usePolymarketInfinite(tag?: string) {
   return useInfiniteQuery({
-    queryKey: ['polymarket-infinite'],
+    queryKey: ['polymarket-infinite', tag || 'all'],
     queryFn: async ({ pageParam = 0 }) => {
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/polymarket-data?action=markets&offset=${pageParam}`;
+      const params = new URLSearchParams({
+        action: 'markets',
+        offset: String(pageParam),
+        limit: String(PAGE_SIZE),
+      });
+      if (tag && tag !== 'all') params.set('tag', tag);
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/polymarket-data?${params}`;
       const res = await fetch(url, {
         headers: { 'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY },
       });
@@ -90,8 +98,8 @@ export function usePolymarketInfinite() {
       return parseMarkets(raw);
     },
     getNextPageParam: (lastPage, allPages) => {
-      if (lastPage.length < 50) return undefined;
-      return allPages.length * 50;
+      if (lastPage.length < PAGE_SIZE) return undefined;
+      return allPages.length * PAGE_SIZE;
     },
     initialPageParam: 0,
     refetchInterval: 60000,
