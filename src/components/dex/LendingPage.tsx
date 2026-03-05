@@ -150,7 +150,7 @@ const AAVE_POOL_ABI = [
   },
 ] as const;
 
-const DISPLAY_TOKENS = new Set(['WETH', 'USDC', 'USDT', 'WBTC', 'DAI', 'LINK', 'AAVE', 'UNI', 'wstETH', 'rETH', 'cbETH', 'GHO', 'CRV', 'MKR', 'SNX', 'LDO', 'RPL', 'BAL', 'FRAX', 'LUSD']);
+const DISPLAY_TOKENS = new Set(['WETH', 'USDC', 'USDT', 'WBTC', 'DAI', 'LINK', 'AAVE', 'UNI', 'wstETH', 'rETH', 'cbETH', 'GHO', 'CRV', 'MKR', 'SNX', 'LDO', 'RPL', 'BAL', 'FRAX', 'LUSD', 'ENS', 'COMP', '1INCH', 'SUSHI', 'FXS', 'KNC', 'STG', 'osETH', 'weETH', 'sDAI', 'crvUSD', 'PYUSD', 'USDe', 'sUSDe']);
 const SYMBOL_OVERRIDES: Record<string, string> = { WETH: 'ETH' };
 
 interface AaveReserve {

@@ -69,7 +69,7 @@ export function useHyperliquidData() {
         };
       });
 
-      // Sort by volume descending, take top 20
+      // Sort by volume descending, show all active markets
       markets.sort((a, b) => {
         const parseVol = (v: string) => {
           const n = parseFloat(v.replace('$', '').replace('B', '').replace('M', ''));
@@ -78,7 +78,7 @@ export function useHyperliquidData() {
         return parseVol(b.volume) - parseVol(a.volume);
       });
 
-      return markets.slice(0, 20);
+      return markets;
     },
     refetchInterval: 10000,
     staleTime: 5000,
