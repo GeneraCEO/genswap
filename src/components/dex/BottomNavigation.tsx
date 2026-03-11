@@ -9,11 +9,12 @@ interface BottomNavigationProps {
 
 export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
   const tabs: { id: Tab; label: string; icon: JSX.Element }[] = [
-    { id: 'swap', label: 'Swap', icon: <ArrowLeftRight className="w-5 h-5" /> },
-    { id: 'perpetuals', label: 'Perps', icon: <TrendingUp className="w-5 h-5" /> },
-    { id: 'predictions', label: 'Predict', icon: <Target className="w-5 h-5" /> },
-    { id: 'bridge', label: 'Bridge', icon: <Layers className="w-5 h-5" /> },
-    { id: 'lend', label: 'Lend', icon: <Coins className="w-5 h-5" /> },
+    { id: 'swap', label: 'Swap', icon: <ArrowLeftRight className="w-4 h-4" /> },
+    { id: 'perpetuals', label: 'Perps', icon: <TrendingUp className="w-4 h-4" /> },
+    { id: 'predictions', label: 'Predict', icon: <Target className="w-4 h-4" /> },
+    { id: 'bridge', label: 'Bridge', icon: <Layers className="w-4 h-4" /> },
+    { id: 'lend', label: 'Lend', icon: <Coins className="w-4 h-4" /> },
+    { id: 'portfolio', label: 'Portfolio', icon: <LayoutDashboard className="w-4 h-4" /> },
   ];
 
   return (
