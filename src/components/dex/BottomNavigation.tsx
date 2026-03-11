@@ -20,7 +20,7 @@ export function BottomNavigation({ activeTab, onTabChange }: BottomNavigationPro
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-3">
       <div className="bg-card/90 backdrop-blur-md rounded-2xl border border-border p-1 max-w-xl mx-auto shadow-lg">
-        <div className="grid grid-cols-5 gap-0.5">
+        <div className="grid grid-cols-6 gap-0.5">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
