@@ -6,6 +6,7 @@ import { UniswapStyleTokenModal } from '../components/dex/UniswapStyleTokenModal
 import { SettingsModal } from '../components/dex/SettingsModal';
 import { PerpetualsPage } from '../components/dex/PerpetualsPage';
 import { LendingPage } from '../components/dex/LendingPage';
+import { PortfolioPage } from '../components/dex/PortfolioPage';
 import { PredictionsPage } from '../components/dex/PredictionsPage';
 import { BridgePage } from '../components/dex/BridgePage';
 import { TradingViewWidget } from '../components/dex/TradingViewWidget';
@@ -82,6 +83,8 @@ const Index = () => {
         return <PredictionsPage />;
       case 'bridge':
         return <BridgePage />;
+      case 'portfolio':
+        return <PortfolioPage />;
       default:
         return null;
     }

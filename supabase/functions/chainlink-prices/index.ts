@@ -47,6 +47,7 @@ const CHAINLINK_FEEDS: Record<string, string> = {
 };
 
 const AGGREGATOR_ABI_HEX = "50d25bcd"; // latestAnswer() selector
+const DECIMALS_ABI_HEX = "313ce567"; // decimals() selector
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -66,26 +67,40 @@ serve(async (req) => {
       .map(async (symbol) => {
         const feedAddress = CHAINLINK_FEEDS[symbol.toUpperCase()];
         try {
-          const response = await fetch(RPC_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              jsonrpc: "2.0",
-              method: "eth_call",
-              params: [
-                { to: feedAddress, data: `0x${AGGREGATOR_ABI_HEX}` },
-                "latest",
-              ],
-              id: 1,
+          // Fetch both latestAnswer and decimals in parallel
+          const [answerRes, decimalsRes] = await Promise.all([
+            fetch(RPC_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jsonrpc: "2.0", method: "eth_call",
+                params: [{ to: feedAddress, data: `0x${AGGREGATOR_ABI_HEX}` }, "latest"],
+                id: 1,
+              }),
             }),
-          });
+            fetch(RPC_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                jsonrpc: "2.0", method: "eth_call",
+                params: [{ to: feedAddress, data: `0x${DECIMALS_ABI_HEX}` }, "latest"],
+                id: 2,
+              }),
+            }),
+          ]);
 
-          const result = await response.json();
-          if (result.result && result.result !== "0x") {
-            // Chainlink prices have 8 decimals
-            const rawPrice = BigInt(result.result);
-            const price = Number(rawPrice) / 1e8;
-            if (price > 0) {
+          const answerResult = await answerRes.json();
+          const decimalsResult = await decimalsRes.json();
+
+          if (answerResult.result && answerResult.result !== "0x") {
+            const rawPrice = BigInt(answerResult.result);
+            // Use actual decimals from the feed (default 8)
+            let feedDecimals = 8;
+            if (decimalsResult.result && decimalsResult.result !== "0x") {
+              feedDecimals = Number(BigInt(decimalsResult.result));
+            }
+            const price = Number(rawPrice) / (10 ** feedDecimals);
+            if (price > 0 && price < 1e9) { // sanity check
               prices[symbol.toUpperCase()] = { usd: price, source: "chainlink" };
             }
           }
