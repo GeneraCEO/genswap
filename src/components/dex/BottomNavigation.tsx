@@ -1,6 +1,6 @@
-import { ArrowLeftRight, TrendingUp, Target, Layers, Coins } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, Target, Layers, Coins, LayoutDashboard } from 'lucide-react';
 
-export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend';
+export type Tab = 'swap' | 'perpetuals' | 'predictions' | 'bridge' | 'lend' | 'portfolio';
 
 interface BottomNavigationProps {
   activeTab: Tab;
