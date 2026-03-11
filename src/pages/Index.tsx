@@ -83,6 +83,8 @@ const Index = () => {
         return <PredictionsPage />;
       case 'bridge':
         return <BridgePage />;
+      case 'portfolio':
+        return <PortfolioPage />;
       default:
         return null;
     }
